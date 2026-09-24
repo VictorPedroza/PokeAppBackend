@@ -19,10 +19,14 @@ public class AuthService {
 
     public void createCredentials(CreateCredentialsRequest request) {
         // 1. Verifica se ID de Usuário já existe
-        userAuthRepository.findById(request.id())
-                .orElseThrow(() -> new RuntimeException("User ID already exists"));
+        if (userAuthRepository.findById(request.id()).isPresent()) {
+            throw new IllegalArgumentException("ID de Usuário já existente");
+        }
 
-        // TODO: 2. Validação de Email
+        // 2. Validação de Email
+        if (userAuthRepository.findByEmail(request.email()).isPresent()) {
+            throw new IllegalArgumentException("Email já existente");
+        }
 
         // 3. Hash de Senha
         String hash = PasswordUtil.hash(request.password());
