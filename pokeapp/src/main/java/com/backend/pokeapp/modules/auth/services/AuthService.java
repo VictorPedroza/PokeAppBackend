@@ -2,10 +2,12 @@ package com.backend.pokeapp.modules.auth.services;
 
 import com.backend.pokeapp.modules.auth.entities.UserAuth;
 import com.backend.pokeapp.modules.auth.interfaces.CreateCredentialsRequest;
+import com.backend.pokeapp.modules.auth.interfaces.GenerateTokenRequest;
+import com.backend.pokeapp.modules.auth.interfaces.GenerateTokenResponse;
 import com.backend.pokeapp.modules.auth.interfaces.GetCredentialsRequest;
 import com.backend.pokeapp.modules.auth.interfaces.UserAuthResponse;
 import com.backend.pokeapp.modules.auth.repositories.UserAuthRepository;
-
+import com.backend.pokeapp.shared.utils.jwt.JwtService;
 import com.backend.pokeapp.shared.utils.password.PasswordUtil;
 
 import org.springframework.stereotype.Service;
@@ -14,9 +16,11 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserAuthRepository userAuthRepository;
+    private final JwtService jwtService;
 
-    public AuthService(UserAuthRepository userAuthRepository) {
+    public AuthService(UserAuthRepository userAuthRepository, JwtService jwtService) {
         this.userAuthRepository = userAuthRepository;
+        this.jwtService = jwtService;
     }
 
     public void createCredentials(CreateCredentialsRequest request) {
@@ -44,5 +48,10 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("ID de Usuário não encontrado"));
 
         return new UserAuthResponse(userAuth.getId(), userAuth.getEmail());
+    }
+
+    public GenerateTokenResponse generateToken(GenerateTokenRequest request) {
+        String token = jwtService.generateToken(request.id());
+        return new GenerateTokenResponse(token);
     }
 }
