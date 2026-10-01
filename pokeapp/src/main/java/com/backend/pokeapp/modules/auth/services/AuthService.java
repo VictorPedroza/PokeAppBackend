@@ -2,6 +2,8 @@ package com.backend.pokeapp.modules.auth.services;
 
 import com.backend.pokeapp.modules.auth.entities.UserAuth;
 import com.backend.pokeapp.modules.auth.interfaces.CreateCredentialsRequest;
+import com.backend.pokeapp.modules.auth.interfaces.GetCredentialsRequest;
+import com.backend.pokeapp.modules.auth.interfaces.UserAuthResponse;
 import com.backend.pokeapp.modules.auth.repositories.UserAuthRepository;
 
 import com.backend.pokeapp.shared.utils.password.PasswordUtil;
@@ -35,5 +37,12 @@ public class AuthService {
         UserAuth newUser = new UserAuth(request.id(), request.email(), hash);
 
         userAuthRepository.save(newUser);
+    }
+
+    public UserAuthResponse getCredentials(GetCredentialsRequest request) {
+        UserAuth userAuth = userAuthRepository.findById(request.id())
+                .orElseThrow(() -> new IllegalArgumentException("ID de Usuário não encontrado"));
+
+        return new UserAuthResponse(userAuth.getId(), userAuth.getEmail());
     }
 }
