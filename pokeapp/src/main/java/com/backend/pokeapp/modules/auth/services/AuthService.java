@@ -3,7 +3,6 @@ package com.backend.pokeapp.modules.auth.services;
 import com.backend.pokeapp.modules.auth.entities.UserAuth;
 import com.backend.pokeapp.modules.auth.interfaces.CreateCredentialsRequest;
 import com.backend.pokeapp.modules.auth.interfaces.GenerateTokenRequest;
-import com.backend.pokeapp.modules.auth.interfaces.GenerateTokenResponse;
 import com.backend.pokeapp.modules.auth.interfaces.GetCredentialsRequest;
 import com.backend.pokeapp.modules.auth.interfaces.UserAuthResponse;
 import com.backend.pokeapp.modules.auth.repositories.UserAuthRepository;
@@ -50,8 +49,7 @@ public class AuthService {
         return new UserAuthResponse(userAuth.getId(), userAuth.getEmail());
     }
 
-    public GenerateTokenResponse generateToken(GenerateTokenRequest request) {
-        String token = jwtService.generateToken(request.id());
-        return new GenerateTokenResponse(token);
+    public String generateToken(GenerateTokenRequest request) {
+        return jwtService.generateToken(request.id());
     }
 }

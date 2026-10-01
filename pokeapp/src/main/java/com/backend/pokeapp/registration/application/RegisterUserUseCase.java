@@ -3,6 +3,7 @@ package com.backend.pokeapp.registration.application;
 import java.util.UUID;
 
 import com.backend.pokeapp.modules.auth.interfaces.CreateCredentialsRequest;
+import com.backend.pokeapp.modules.auth.interfaces.GenerateTokenRequest;
 import com.backend.pokeapp.modules.auth.services.AuthService;
 
 import com.backend.pokeapp.modules.user.entities.User;
@@ -24,7 +25,7 @@ public class RegisterUserUseCase {
     }
 
     @Transactional
-    public void execute(RegisterUserRequest request) {
+    public String execute(RegisterUserRequest request) {
 
         if (userRepository.existsByUsername(request.username())) {
             throw new IllegalArgumentException("Nome de Usuário já existente");
@@ -32,9 +33,16 @@ public class RegisterUserUseCase {
 
         String id = UUID.randomUUID().toString();
 
-        CreateCredentialsRequest credentials = new CreateCredentialsRequest(id, request.email(), request.password());
+        CreateCredentialsRequest credentials = new CreateCredentialsRequest(
+                id,
+                request.email(),
+                request.password());
+
         authService.createCredentials(credentials);
 
-        userRepository.save(new User(id, request.username()));
+        userRepository.save(
+                new User(id, request.username()));
+
+        return authService.generateToken(new GenerateTokenRequest(id));
     }
 }
