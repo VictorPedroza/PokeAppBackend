@@ -4,6 +4,7 @@ import com.backend.pokeapp.modules.auth.entities.UserAuth;
 import com.backend.pokeapp.modules.auth.interfaces.CreateCredentialsRequest;
 import com.backend.pokeapp.modules.auth.interfaces.GenerateTokenRequest;
 import com.backend.pokeapp.modules.auth.interfaces.GetCredentialsRequest;
+import com.backend.pokeapp.modules.auth.interfaces.LoginRequest;
 import com.backend.pokeapp.modules.auth.interfaces.UserAuthResponse;
 import com.backend.pokeapp.modules.auth.repositories.UserAuthRepository;
 import com.backend.pokeapp.shared.utils.jwt.JwtService;
@@ -51,5 +52,20 @@ public class AuthService {
 
     public String generateToken(GenerateTokenRequest request) {
         return jwtService.generateToken(request.id());
+    }
+
+    public UserAuth authenticate(LoginRequest request) {
+
+        UserAuth userAuth = userAuthRepository
+                .findByEmail(request.email())
+                .orElseThrow(() -> new IllegalArgumentException("Email ou senha inválidos"));
+
+        if (!PasswordUtil.check(
+                request.password(),
+                userAuth.getPassword())) {
+            throw new IllegalArgumentException("Email ou senha inválidos");
+        }
+
+        return userAuth;
     }
 }
