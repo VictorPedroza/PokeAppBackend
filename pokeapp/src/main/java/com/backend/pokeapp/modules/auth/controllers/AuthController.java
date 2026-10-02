@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.pokeapp.modules.auth.entities.UserAuth;
@@ -22,6 +23,7 @@ import com.backend.pokeapp.modules.auth.services.AuthService;
 import jakarta.validation.Valid;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -55,8 +57,11 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserAuthResponse> me(@AuthenticationPrincipal String id) {
-        UserAuthResponse user = authService.getCredentials(new GetCredentialsRequest(id));
+    public ResponseEntity<UserAuthResponse> me(
+            @AuthenticationPrincipal String id) {
+        UserAuthResponse user = authService.getCredentials(
+                new GetCredentialsRequest(id));
+
         return ResponseEntity.ok(user);
     }
 
